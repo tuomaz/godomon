@@ -4,12 +4,11 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"time"
 	"net/http"
-"runtime"
-"runtime/pprof"
-
+	"os"
+	"runtime"
+	"runtime/pprof"
+	"time"
 
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/veandco/go-sdl2/sdl"
@@ -35,18 +34,18 @@ var winTitle string = "Text"
 var winWidth, winHeight int = 1920, 1200
 
 func main() {
-go func() {
-	fmt.Println(http.ListenAndServe(":6060", nil))
-}()
+	go func() {
+		fmt.Println(http.ListenAndServe(":6060", nil))
+	}()
 	f, err := os.Create("mem.prof")
-        if err != nil {
-            fmt.Printf("could not create memory profile: ", err)
-        }
-        runtime.GC() // get up-to-date statistics
-        if err := pprof.WriteHeapProfile(f); err != nil {
-            fmt.Printf("could not write memory profile: ", err)
-        }
-        f.Close()
+	if err != nil {
+		fmt.Printf("could not create memory profile: ", err)
+	}
+	runtime.GC() // get up-to-date statistics
+	if err := pprof.WriteHeapProfile(f); err != nil {
+		fmt.Printf("could not write memory profile: ", err)
+	}
+	f.Close()
 
 	fmt.Printf("Starting up...")
 
@@ -149,39 +148,36 @@ func run() int {
 
 	sdl.ShowCursor(sdl.DISABLE)
 
-//MainLoop:
+	//MainLoop:
 	for run {
-/*		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				run = false
-				break MainLoop
-			case *sdl.KeyDownEvent:
-				run = false
-				break MainLoop
+		/*		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+				switch event.(type) {
+				case *sdl.QuitEvent:
+					run = false
+					break MainLoop
+				case *sdl.KeyDownEvent:
+					run = false
+					break MainLoop
 
-			}
+				}
 
-		}*/
+			}*/
 		t := time.Now()
 
 		if clock, err = font.RenderUTF8_Blended(t.Format("15.04"), sdl.Color{255, 255, 255, 255}); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to render text: %s\n", err)
 			return 5
 		}
-		defer clock.Free()
 
 		if out, err = font.RenderUTF8_Blended(temperature+"°", sdl.Color{255, 255, 255, 255}); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to render text: %s\n", err)
 			return 5
 		}
-		defer out.Free()
 
 		if kitchen, err = font.RenderUTF8_Blended(tempKitchen+"°", sdl.Color{255, 255, 255, 255}); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to render text: %s\n", err)
 			return 5
 		}
-		defer kitchen.Free()
 
 		if clockTexture, err = renderer.CreateTextureFromSurface(clock); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to create texture from surface: %s\n", err)
@@ -224,6 +220,13 @@ func run() int {
 		renderer.Copy(outTexture, nil, outRect)
 		renderer.Copy(kitchenTexture, nil, kitchenRect)
 		renderer.Present()
+		clock.Free()
+		out.Free()
+		kitchen.Free()
+		clockTexture.Destroy()
+		outTexture.Destroy()
+		kitchenTexture.Destroy()
+
 		sdl.Delay(10000)
 	}
 	font.Close()
