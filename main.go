@@ -12,7 +12,7 @@ import (
 
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/sdl_ttf"
+	"github.com/veandco/go-sdl2/ttf"
 	"github.com/yosssi/gmq/mqtt"
 	"github.com/yosssi/gmq/mqtt/client"
 )
@@ -30,8 +30,8 @@ var blowup bool
 var premult bool
 var temperature string
 var tempKitchen string
-var winTitle string = "Text"
-var winWidth, winHeight int = 1920, 1200
+var winTitle = "Text"
+var winWidth, winHeight int32 = 1920, 1200
 
 func main() {
 	go func() {
@@ -63,7 +63,7 @@ func main() {
 	// Connect to the MQTT Server.
 	err = cli.Connect(&client.ConnectOptions{
 		Network:  "tcp",
-		Address:  "192.168.1.5:1883",
+		Address:  "192.168.1.3:1883",
 		ClientID: []byte("go-domoticz-monitor-2"),
 	})
 	if err != nil {
@@ -164,17 +164,17 @@ func run() int {
 			}*/
 		t := time.Now()
 
-		if clock, err = font.RenderUTF8_Blended(t.Format("15.04"), sdl.Color{255, 255, 255, 255}); err != nil {
+		if clock, err = font.RenderUTF8Blended(t.Format("15.04"), sdl.Color{255, 255, 255, 255}); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to render text: %s\n", err)
 			return 5
 		}
 
-		if out, err = font.RenderUTF8_Blended(temperature+"°", sdl.Color{255, 255, 255, 255}); err != nil {
+		if out, err = font.RenderUTF8Blended(temperature+"°", sdl.Color{255, 255, 255, 255}); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to render text: %s\n", err)
 			return 5
 		}
 
-		if kitchen, err = font.RenderUTF8_Blended(tempKitchen+"°", sdl.Color{255, 255, 255, 255}); err != nil {
+		if kitchen, err = font.RenderUTF8Blended(tempKitchen+"°", sdl.Color{255, 255, 255, 255}); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to render text: %s\n", err)
 			return 5
 		}
